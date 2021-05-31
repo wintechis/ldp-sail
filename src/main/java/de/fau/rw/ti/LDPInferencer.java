@@ -24,5 +24,16 @@ public class LDPInferencer extends AbstractForwardChainingInferencer {
 			throw new SailException(e.getMessage(), e);
 		}
 	}
+
+	@Override
+	public void initialize() throws SailException {
+		super.initialize();
+
+		try (LDPInferencerConnection con = getConnection()) {
+			con.begin();
+			con.addAxiomStatements();
+			con.commit();
+		}
+	}
     
 }

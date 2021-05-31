@@ -2,6 +2,7 @@ package de.fau.rw.ti;
 
 import java.util.Iterator;
 
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Resource;
@@ -48,33 +49,37 @@ public class LDPInferencerConnection extends AbstractForwardChainingInferencerCo
 	private int applyRuleLdpDirect1(Model iteration) throws SailException {
 		int nofInferred = 0;
 
-        Iterable<Statement> directContainers = iteration.getStatements(null, RDF.TYPE, LDP.DIRECT_CONTAINER);
-        for(Statement directContainer : directContainers) {
-            IRI dc = (IRI) directContainer.getSubject();
+        CloseableIteration<? extends Statement, SailException> directContainers = getWrappedConnection().getStatements(null, RDF.TYPE, LDP.DIRECT_CONTAINER, false);
+        while(directContainers.hasNext()) {
+            IRI dc = (IRI) directContainers.next().getSubject();
 
-            Iterator<Statement> membershipResources = iteration.getStatements(dc, LDP.MEMBERSHIP_RESOURCE, null).iterator();
+            CloseableIteration<? extends Statement, SailException> membershipResources = getWrappedConnection().getStatements(dc, LDP.MEMBERSHIP_RESOURCE, null, false);
             if(!membershipResources.hasNext()) {
                 continue;
             }
             Statement membershipResourceStatement = membershipResources.next();
             Resource membershipResource = (Resource) membershipResourceStatement.getObject();
             Resource membershipResourceContext = (Resource) membershipResourceStatement.getContext();
+            membershipResources.close();
 
-            Iterator<Statement> memberRelations = iteration.getStatements(dc, LDP.HAS_MEMBER_RELATION, null).iterator();
+            CloseableIteration<? extends Statement, SailException> memberRelations = getWrappedConnection().getStatements(dc, LDP.HAS_MEMBER_RELATION, null, false);
             if(!memberRelations.hasNext()) {
                 continue;
             }
             IRI memberRelation = (IRI) memberRelations.next().getObject();
+            memberRelations.close();
 
-            Iterable<Statement> containedResources = iteration.getStatements(dc, LDP.CONTAINS, null);
-            for(Statement containedResource : containedResources) {
-                boolean added = addInferredStatement(membershipResource, memberRelation, containedResource.getObject(), membershipResourceContext);
+            CloseableIteration<? extends Statement, SailException> containedResources = getWrappedConnection().getStatements(dc, LDP.CONTAINS, null, false);
+            while(containedResources.hasNext()) {
+                boolean added = addInferredStatement(membershipResource, memberRelation, containedResources.next().getObject(), membershipResourceContext);
 
                 if (added) {
                     nofInferred++;
                 }
             }
+            containedResources.close();
         }
+        directContainers.close();
 
 		return nofInferred;
 	}
@@ -89,43 +94,49 @@ public class LDPInferencerConnection extends AbstractForwardChainingInferencerCo
 	private int applyRuleLdpIndirect1(Model iteration) throws SailException {
 		int nofInferred = 0;
 
-        Iterable<Statement> indirectContainers = iteration.getStatements(null, RDF.TYPE, LDP.INDIRECT_CONTAINER);
-        for(Statement indirectContainer : indirectContainers) {
-            IRI dc = (IRI) indirectContainer.getSubject();
+        CloseableIteration<? extends Statement, SailException> indirectContainers = getWrappedConnection().getStatements(null, RDF.TYPE, LDP.INDIRECT_CONTAINER, false);
+        while(indirectContainers.hasNext()) {
+            IRI dc = (IRI) indirectContainers.next().getSubject();
 
-            Iterator<Statement> membershipResources = iteration.getStatements(dc, LDP.MEMBERSHIP_RESOURCE, null).iterator();
+            CloseableIteration<? extends Statement, SailException> membershipResources = getWrappedConnection().getStatements(dc, LDP.MEMBERSHIP_RESOURCE, null, false);
             if(!membershipResources.hasNext()) {
                 continue;
             }
             Statement membershipResourceStatement = membershipResources.next();
             Resource membershipResource = (Resource) membershipResourceStatement.getObject();
             Resource membershipResourceContext = (Resource) membershipResourceStatement.getContext();
+            membershipResources.close();
 
-            Iterator<Statement> memberRelations = iteration.getStatements(dc, LDP.HAS_MEMBER_RELATION, null).iterator();
+            CloseableIteration<? extends Statement, SailException> memberRelations = getWrappedConnection().getStatements(dc, LDP.HAS_MEMBER_RELATION, null, false);
             if(!memberRelations.hasNext()) {
                 continue;
             }
             IRI memberRelation = (IRI) memberRelations.next().getObject();
+            memberRelations.close();
 
-            Iterator<Statement> insertedContentRelations = iteration.getStatements(dc, LDP.INSERTED_CONTENT_RELATION, null).iterator();
+            CloseableIteration<? extends Statement, SailException> insertedContentRelations = getWrappedConnection().getStatements(dc, LDP.INSERTED_CONTENT_RELATION, null, false);
             if(!insertedContentRelations.hasNext()) {
                 continue;
             }
             IRI insertedContentRelation = (IRI) insertedContentRelations.next().getObject();
+            insertedContentRelations.close();
 
-            Iterable<Statement> containedResources = iteration.getStatements(dc, LDP.CONTAINS, null);
-            for(Statement containedResource : containedResources) {
-                Iterable<Statement> values = iteration.getStatements((Resource) containedResource.getObject(), insertedContentRelation, null);
-                for(Statement value : values) {
-                    Value v = value.getObject();
+            CloseableIteration<? extends Statement, SailException> containedResources = getWrappedConnection().getStatements(dc, LDP.CONTAINS, null, false);
+            while(containedResources.hasNext()) {
+                CloseableIteration<? extends Statement, SailException> values = getWrappedConnection().getStatements((Resource) containedResources.next().getObject(), insertedContentRelation, null, false);
+                while(values.hasNext()) {
+                    Value v = values.next().getObject();
                     boolean added = addInferredStatement(membershipResource, memberRelation, v, membershipResourceContext);
 
                     if (added) {
                         nofInferred++;
                     }
                 }
+                values.close();
             }
+            containedResources.close();
         }
+        indirectContainers.close();
 
 		return nofInferred;
 	}

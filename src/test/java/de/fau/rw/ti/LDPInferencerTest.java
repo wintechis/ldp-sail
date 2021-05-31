@@ -6,9 +6,12 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Statement;
 import org.eclipse.rdf4j.model.ValueFactory;
 import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.LDP;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.model.vocabulary.XSD;
 import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
@@ -37,6 +40,7 @@ public class LDPInferencerTest {
     }
 
     @Test
+    @SuppressWarnings("unused")
     public void testRuleLdpDirect1NotMore() throws RDFParseException, RepositoryException, IOException {
         Repository repo = new SailRepository(new LDPInferencer(new MemoryStore()));
         RepositoryConnection conn = repo.getConnection();
@@ -80,6 +84,26 @@ public class LDPInferencerTest {
         }
 
         assertEquals(9, size);
+    }
+
+    @Test
+    public void testLdpDirectAddedLater() throws RDFParseException, RepositoryException, IOException {
+        Repository repo = new SailRepository(new LDPInferencer(new MemoryStore()));
+        RepositoryConnection conn = repo.getConnection();
+        conn.add(getFile("ldp_direct.trig"));
+
+        IRI newResource = factory.createIRI("htt://example.org/directContainer/resourceC");
+        IRI directContainer = factory.createIRI("http://example.org/directContainer");
+        conn.add(newResource, RDF.TYPE, LDP.RESOURCE, newResource);
+        conn.add(directContainer, LDP.CONTAINS, newResource, directContainer);
+
+        assertTrue(conn.getStatements(
+            factory.createIRI("http://example.org/directContainer#a"), 
+            factory.createIRI("http://example.org/value"), 
+            newResource,
+            true,
+            directContainer
+        ).hasNext());
     }
 
     private File getFile(String name) {
