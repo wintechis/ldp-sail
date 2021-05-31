@@ -1,0 +1,17 @@
+@base <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ldp: <http://www.w3.org/ns/ldp#> .
+
+<directContainer> {
+    <directContainer> a ldp:DirectContainer ;
+        ldp:contains <directContainer/resourceA> ;
+        ldp:membershipResource <directContainer#a> ;
+        ldp:hasMemberRelation <value> .
+
+    <directContainer#a> a <Stub> .
+}
+
+<directContainer/resourceA> {
+    <directContainer/resourceA> a ldp:Resource ;
+        rdf:value 3 .
+}
