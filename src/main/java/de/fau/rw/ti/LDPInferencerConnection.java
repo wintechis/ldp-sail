@@ -59,7 +59,6 @@ public class LDPInferencerConnection extends AbstractForwardChainingInferencerCo
             }
             Statement membershipResourceStatement = membershipResources.next();
             Resource membershipResource = (Resource) membershipResourceStatement.getObject();
-            Resource membershipResourceContext = (Resource) membershipResourceStatement.getContext();
             membershipResources.close();
 
             CloseableIteration<? extends Statement, SailException> memberRelations = getWrappedConnection().getStatements(dc, LDP.HAS_MEMBER_RELATION, null, false);
@@ -71,7 +70,7 @@ public class LDPInferencerConnection extends AbstractForwardChainingInferencerCo
 
             CloseableIteration<? extends Statement, SailException> containedResources = getWrappedConnection().getStatements(dc, LDP.CONTAINS, null, false);
             while(containedResources.hasNext()) {
-                boolean added = addInferredStatement(membershipResource, memberRelation, containedResources.next().getObject(), membershipResourceContext);
+                boolean added = addInferredStatement(membershipResource, memberRelation, containedResources.next().getObject(), membershipResource);
 
                 if (added) {
                     nofInferred++;
@@ -104,7 +103,6 @@ public class LDPInferencerConnection extends AbstractForwardChainingInferencerCo
             }
             Statement membershipResourceStatement = membershipResources.next();
             Resource membershipResource = (Resource) membershipResourceStatement.getObject();
-            Resource membershipResourceContext = (Resource) membershipResourceStatement.getContext();
             membershipResources.close();
 
             CloseableIteration<? extends Statement, SailException> memberRelations = getWrappedConnection().getStatements(dc, LDP.HAS_MEMBER_RELATION, null, false);
@@ -126,7 +124,7 @@ public class LDPInferencerConnection extends AbstractForwardChainingInferencerCo
                 CloseableIteration<? extends Statement, SailException> values = getWrappedConnection().getStatements((Resource) containedResources.next().getObject(), insertedContentRelation, null, false);
                 while(values.hasNext()) {
                     Value v = values.next().getObject();
-                    boolean added = addInferredStatement(membershipResource, memberRelation, v, membershipResourceContext);
+                    boolean added = addInferredStatement(membershipResource, memberRelation, v, membershipResource);
 
                     if (added) {
                         nofInferred++;

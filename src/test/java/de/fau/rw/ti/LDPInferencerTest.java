@@ -35,7 +35,7 @@ public class LDPInferencerTest {
             factory.createIRI("http://example.org/value"), 
             factory.createIRI("http://example.org/directContainer/resourceA"),
             true,
-            factory.createIRI("http://example.org/directContainer")
+            factory.createIRI("http://example.org/directContainer#a")
         ).hasNext());
     }
 
@@ -66,7 +66,7 @@ public class LDPInferencerTest {
             factory.createIRI("http://example.org/value"), 
             factory.createLiteral("4", XSD.INTEGER),
             true,
-            factory.createIRI("http://example.org/indirectContainer")
+            factory.createIRI("http://example.org/indirectContainer#b")
         ).hasNext());
     }
 
@@ -102,7 +102,7 @@ public class LDPInferencerTest {
             factory.createIRI("http://example.org/value"), 
             newResource,
             true,
-            directContainer
+            factory.createIRI("http://example.org/directContainer#a")
         ).hasNext());
     }
 
