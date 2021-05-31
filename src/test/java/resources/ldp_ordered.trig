@@ -1,0 +1,23 @@
+@base <http://example.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ldp: <http://www.w3.org/ns/ldp#> .
+
+<orderedContainer> {
+    <orderedContainer> a ldp:OrderedContainer ;
+        ldp:contains <orderedContainer/resourceC>, <orderedContainer/resourceD> ;
+        ldp:membershipResource <orderedContainer#c> ;
+        ldp:hasMemberRelation <next> ;
+        ldp:orderContentRelation rdf:value .
+
+    <orderedContainer#c> a <Stub> .
+}
+
+<orderedContainer/resourceC> {
+    <orderedContainer/resourceC> a ldp:Resource ;
+        rdf:value 15 .
+}
+
+<orderedContainer/resourceD> {
+    <orderedContainer/resourceD> a ldp:Resource ;
+        rdf:value 10 .
+}

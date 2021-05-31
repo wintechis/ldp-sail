@@ -87,6 +87,37 @@ public class LDPInferencerTest {
     }
 
     @Test
+    public void testRuleLdpOrdered1() throws RDFParseException, RepositoryException, IOException {
+        Repository repo = new SailRepository(new LDPInferencer(new MemoryStore()));
+        RepositoryConnection conn = repo.getConnection();
+        conn.add(getFile("ldp_ordered.trig"));
+
+        assertTrue(conn.getStatements(
+            factory.createIRI("http://example.org/orderedContainer#c"), 
+            factory.createIRI("http://example.org/next"), 
+            factory.createIRI("http://example.org/orderedContainer/resourceD"),
+            true,
+            factory.createIRI("http://example.org/orderedContainer#c")
+        ).hasNext());
+    }
+
+    @Test
+    @SuppressWarnings("unused")
+    public void testRuleLdpOrdered1NotMore() throws RDFParseException, RepositoryException, IOException {
+        Repository repo = new SailRepository(new LDPInferencer(new MemoryStore()));
+        RepositoryConnection conn = repo.getConnection();
+        conn.add(getFile("ldp_ordered.trig"));
+
+        int size = 0;
+        Iterable<Statement> statements = conn.getStatements(null, null, null, true);
+        for(Statement s : statements) {
+            size++;
+        }
+
+        assertEquals(12, size);
+    }
+
+    @Test
     public void testLdpDirectAddedLater() throws RDFParseException, RepositoryException, IOException {
         Repository repo = new SailRepository(new LDPInferencer(new MemoryStore()));
         RepositoryConnection conn = repo.getConnection();
