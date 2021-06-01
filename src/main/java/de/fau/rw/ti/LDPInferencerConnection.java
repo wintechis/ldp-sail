@@ -206,10 +206,12 @@ public class LDPInferencerConnection extends AbstractForwardChainingInferencerCo
             }
             containedResources.close();
 
-            boolean added = addInferredStatement(membershipResource, memberRelation, lowestResource, membershipResource);
+            if(lowestResource != null) {
+                boolean added = addInferredStatement(membershipResource, memberRelation, lowestResource, membershipResource);
 
-            if (added) {
-                nofInferred++;
+                if (added) {
+                    nofInferred++;
+                }
             }
         }
         orderedContainers.close();
