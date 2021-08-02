@@ -20,8 +20,8 @@ import org.eclipse.rdf4j.sail.inferencer.fc.AbstractForwardChainingInferencerCon
 
 public class LDPInferencerConnection extends AbstractForwardChainingInferencerConnection {
 
-    public static final IRI LDP_ORDERED_CONTAINER = SimpleValueFactory.getInstance().createIRI(LDP.NAMESPACE, "OrderedContainer");
-    public static final IRI LDP_ORDER_CONTENT_RELATION = SimpleValueFactory.getInstance().createIRI(LDP.NAMESPACE, "orderContentRelation");
+    public static final IRI LDP_ORDERED_CONTAINER = SimpleValueFactory.getInstance().createIRI("https://solid.ti.rw.fau.de/public/ns/linked-data-structures#", "OrderedContainer");
+    public static final IRI LDP_ORDER_CONTENT_RELATION = SimpleValueFactory.getInstance().createIRI("https://solid.ti.rw.fau.de/public/ns/linked-data-structures#", "orderContentRelation");
 
     public LDPInferencerConnection(Sail sail, InferencerConnection con) {
         super(sail, con);

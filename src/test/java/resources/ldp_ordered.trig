@@ -1,13 +1,14 @@
 @base <http://example.org/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix ldp: <http://www.w3.org/ns/ldp#> .
+@prefix lds: <https://solid.ti.rw.fau.de/public/ns/linked-data-structures#> .
 
 <orderedContainer> {
-    <orderedContainer> a ldp:OrderedContainer ;
+    <orderedContainer> a lds:OrderedContainer ;
         ldp:contains <orderedContainer/resourceC>, <orderedContainer/resourceD> ;
         ldp:membershipResource <orderedContainer#c> ;
         ldp:hasMemberRelation <next> ;
-        ldp:orderContentRelation rdf:value .
+        lds:orderContentRelation rdf:value .
 
     <orderedContainer#c> a <Stub> .
 }
