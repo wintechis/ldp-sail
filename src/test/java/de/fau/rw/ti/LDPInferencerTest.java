@@ -139,6 +139,6 @@ public class LDPInferencerTest {
 
     private File getFile(String name) {
         ClassLoader classLoader = LDPInferencerTest.class.getClassLoader();
-        return new File(classLoader.getResource("resources/" + name).getFile());
+        return new File(classLoader.getResource("./resources/" + name).getFile());
     }
 }
